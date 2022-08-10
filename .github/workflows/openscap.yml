@@ -1,28 +1,22 @@
-name: Release openscap image
+name: build our image
+
 on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'test build'
-        required: true
   push:
-    branches: 
-      - 'master'
+    branches: master
+
 jobs:
-  release-build-publish:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Clone source code
-        uses: actions/checkout@v1
+      - name: checkout code
+        uses: actions/checkout@v2
+      - name: install buildx
+        id: buildx
+        uses: crazy-max/ghaction-docker-buildx@v1
         with:
-          fetch-depth: 1
-          ref: master
-          
-      - name: Build and push images
-        run: |   
-          - docker buildx version
-          - docker buildx create --driver docker-container --use
-          - docker buildx build --platform linux/amd64,linux/ppc64le -t openscap-ocp -f images/openscap/Dockerfile .
-          - docker images
-   
-   
+          version: latest
+      - name: build the image
+      run: |
+        docker buildx build \
+          --tag quay.io/aditijadhav/openscap:latest \
+          --platform linux/amd64,linux-ppc64le -f images/openscap/Dockerfile .
