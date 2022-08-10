@@ -5,9 +5,8 @@ on:
     branches: master
 
 jobs:
-  build:
     runs-on: ubuntu-latest
-    steps:
+      steps:
       - name: checkout code
         uses: actions/checkout@v2
       - name: install buildx
@@ -16,7 +15,7 @@ jobs:
         with:
           version: latest
       - name: build the image
-      run: |
-        docker buildx build \
-          --tag quay.io/aditijadhav/openscap:latest \
+        run: |
+          docker buildx build \
+           --tag quay.io/aditijadhav/openscap:latest \
           --platform linux/amd64,linux-ppc64le -f images/openscap/Dockerfile .
