@@ -36,7 +36,7 @@ jobs:
         with:
           image: ${{ env.IMAGE_NAME }}
           tags: linux-ppc64le
-          arch: amd64
+          arch: ppc64le
           containerfiles: |
             ./images/openscap/Dockerfile
               
