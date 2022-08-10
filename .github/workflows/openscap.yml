@@ -4,7 +4,7 @@ on:
   push:
       
 env:
-  IMAGE_NAME: openscap
+  IMAGE_NAME: openscap-ocp
   IMAGE_TAG: multi-arch
   IMAGE_REGISTRY: quay.io
   IMAGE_NAMESPACE: aditijadhav
