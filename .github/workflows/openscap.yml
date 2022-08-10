@@ -5,17 +5,17 @@ on:
     branches: master
 
 jobs:
-    runs-on: ubuntu-latest
-      steps:
-      - name: checkout code
-        uses: actions/checkout@v2
-      - name: install buildx
-        id: buildx
-        uses: crazy-max/ghaction-docker-buildx@v1
-        with:
-          version: latest
-      - name: build the image
-        run: |
-          docker buildx build \
+  runs-on: ubuntu-latest
+  steps:
+       - name: checkout code
+         uses: actions/checkout@v2
+       - name: install buildx
+         id: buildx
+         uses: crazy-max/ghaction-docker-buildx@v1
+         with:
+           version: latest
+       - name: build the image
+         run: |
+           docker buildx build \
            --tag quay.io/aditijadhav/openscap:latest \
           --platform linux/amd64,linux-ppc64le -f images/openscap/Dockerfile .
