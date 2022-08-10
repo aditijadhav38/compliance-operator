@@ -1,40 +1,35 @@
-kind: pipeline
-type: docker
-name: amd64
-
-steps:
-
-- name: Buildx
-  image: docker:20
-  privileged: true
+name: Release openscap image
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'test build'
+        required: true
+  push:
+    branches: 
+      - 'master'
+jobs:
+  release-build-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone source code
+        uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+          ref: release
   
-- name: Login to Quay.io
-  uses: azure/docker-login@v1
-  with:
-    login-server: quay.io
-    username: ${{ secrets.QUAY_USERNAME }}
-    password: ${{ secrets.QUAY_PASSWORD }}  
-  
-  environment:
-    GOOS: linux
-    GOARCH: ppc64le
-    DOCKER_CLI_EXPERIMENTAL: enabled
-  
- 
-  volumes:
-    - name: docker socket
-      path: /var/run/docker.sock
-
-  commands:
-  - docker buildx version
-  - docker buildx create --driver docker-container --use
-  - docker buildx build --platform linux/amd64,linux/ppc64le -t openscap-ocp -f images/openscap/Dockerfile .
-  - docker images
- 
-  
-  
-  
-volumes:
-- name: docker socket
-  host:
-    path: /var/run/docker.sock
+      - name: Login to Quay.io
+        uses: azure/docker-login@v1
+        with:
+          login-server: quay.io
+          username: ${{ secrets.QUAY_USERNAME }}
+          password: ${{ secrets.QUAY_PASSWORD }}  
+    
+      - name: Build and push images
+        run: |   
+          - docker buildx version
+          - docker buildx create --driver docker-container --use
+          - docker buildx build --platform linux/amd64,linux/ppc64le -t openscap-ocp -f images/openscap/Dockerfile .
+          - docker images
+   
+   
