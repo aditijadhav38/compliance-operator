@@ -1,94 +1,73 @@
-name: Multiarch with buildx
+name: Multiarch build
 
 on:
   push:
-    branches:
-      - master
-
+      
 env:
-  IMAGE: quay.io/aditijadhav/openscap
-  
+  IMAGE_NAME: openscap-ocp
+  IMAGE_TAG: multi-arch
+  IMAGE_REGISTRY: ghcr.io
+  IMAGE_NAMESPACE: aditijadhav38
+
 jobs:
-
-  build-images:
+  build:
+    name: Build and push multi-arch image
     runs-on: ubuntu-20.04
-    continue-on-error: true
-    strategy:
-      fail-fast: false
-      matrix:
-        arch: [amd64,arm64,ppc64le,s390x]
-    outputs:
-      amd64: ${{ steps.result.outputs.amd64 }}
-      arm64: ${{ steps.result.outputs.arm64 }}
-      ppc64le: ${{ steps.result.outputs.ppc64le }}
-      s390x: ${{ steps.result.outputs.s390x }}
+    
     steps:
-      -
-        name: "Checkout Compliance operator source code"
+      - name: add checkout action...
         uses: actions/checkout@v2
-      -
-        name: "Set up QEMU"
+        
+        
+      - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
-      -
-        name: "Set up Docker Buildx ${{ matrix.arch }}"
-        uses: docker/setup-buildx-action@v1
-      -
-        name: "Docker quay.io Login"
-        uses: docker/login-action@v1
+            
+      - name: Build image linux/amd64
+        uses: redhat-actions/buildah-build@v2
         with:
-          registry: quay.io
-          username: ${{ secrets.QUAY_USER }}
-          password: ${{ secrets.QUAY_PWD }}
-      -
-        name: "Build and push ${{ matrix.arch }}"
-        uses: docker/build-push-action@v2
+          image: ${{ env.IMAGE_NAME }}
+          tags: linux-amd64
+          arch: amd64
+          containerfiles: |
+            ./images/openscap/Dockerfile
+     
+      - name: Build image linux/ppc64le
+        uses: redhat-actions/buildah-build@v2
         with:
-          context: .
-          file: ./images/openscap/Dockerfile
-          platforms: linux/${{ matrix.arch }}
-          push: true
-          tags: ${{ env.IMAGE }}:${{ matrix.arch }}-next
-      -
-        id: result
-        name: "Build result outputs version"
-        if: ${{ success() }}
-        run: echo "::set-output name=${{ matrix.arch }}::${{ matrix.arch }}-next"
-
-  create-manifest:
-    if: always()
-    needs: build-images
-    runs-on: ubuntu-20.04
-    steps:
-      -
-        name: "Docker quay.io Login"
-        uses: docker/login-action@v1
+          image: ${{ env.IMAGE_NAME }}
+          tags: linux-ppc64le
+          arch: ppc64le
+          containerfiles: |
+            ./images/openscap/Dockerfile
+      
+      - name: Build image linux/s390x
+        uses: redhat-actions/buildah-build@v2
         with:
-          registry: quay.io
-          username: ${{ secrets.QUAY_USER }}
-          password: ${{ secrets.QUAY_PWD }}
-      -
-        name: "Create and push manifest"
+          image: ${{ env.IMAGE_NAME }}
+          tags: linux-s390x
+          arch: s390x
+          containerfiles: |
+            ./images/openscap/Dockerfile
+            
+                   
+      - name: Check images created
+        run: buildah images | grep '${{ env.IMAGE_NAME }}'
+          
+      - name: Create and add to manifest
         run: |
-          AMEND=""
-          AMD64_VERSION="${{ needs['build-images'].outputs.amd64 }}"
-          if [ -n "$AMD64_VERSION" ]; then
-            AMEND+=" --amend ${{ env.IMAGE }}:$AMD64_VERSION";
-          fi
-          ARM64_VERSION="${{ needs['build-images'].outputs.arm64 }}"
-          if [ -n "$ARM64_VERSION" ]; then
-            AMEND+=" --amend ${{ env.IMAGE }}:$ARM64_VERSION";
-          fi
-          PPC64LE_VERSION="${{ needs['build-images'].outputs.ppc64le }}"
-          if [ -n "$PPC64LE_VERSION" ]; then
-            AMEND+=" --amend ${{ env.IMAGE }}:$PPC64LE_VERSION";
-          fi
-          S390X_VERSION="${{ needs['build-images'].outputs.s390x }}"
-          if [ -n "$S390X_VERSION" ]; then
-            AMEND+=" --amend ${{ env.IMAGE }}:$S390X_VERSION";
-          fi
-          if [ -z "$AMEND" ]; then
-            echo "[!] The job 'build-images' didn't provide any outputs. Can't create the manifest list."
-            exit 1;
-          fi
-          docker manifest create ${{ env.IMAGE }}:multiarch-next $AMEND
-          docker manifest push ${{ env.IMAGE }}:multiarch-next
+          buildah manifest create ${{ env.IMAGE_NAME }}
+          buildah manifest add ${{ env.IMAGE_NAME }} ${{ env.IMAGE_NAME }}:linux-amd64
+          buildah manifest add ${{ env.IMAGE_NAME }} ${{ env.IMAGE_NAME }}:linux-ppc64le
+          buildah manifest add ${{ env.IMAGE_NAME }} ${{ env.IMAGE_NAME }}:linux-s390x
+               
+     # Authenticate to container image registry to push the image
+      - name: Podman Login
+        uses: redhat-actions/podman-login@v1
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.actor }}
+          password: ${{ secrets.token }}
+          
+      - name: Push manifest
+        run: |          
+            podman manifest push ${{ env.IMAGE_NAME }}  ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}  --all  
