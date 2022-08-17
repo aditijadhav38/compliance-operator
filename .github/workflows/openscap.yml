@@ -20,8 +20,10 @@ jobs:
     steps:
       - name: add checkout action...
         uses: actions/checkout@v2
-        
-        
+      - name: Set Env Tags
+        run: echo RELEASE_TAG=$(echo $GITHUB_REF | cut -d '/' -f 3) >> $GITHUB_ENV
+
+      
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
             
@@ -29,7 +31,7 @@ jobs:
         uses: redhat-actions/buildah-build@v2
         with:
           image: ${{ env.IMAGE_NAME }}
-          tags: linux-amd64
+          tags: ${{ env.RELEASE_TAG }}-linux-amd64
           arch: amd64
           containerfiles: |
             ./images/openscap/Dockerfile
@@ -38,7 +40,7 @@ jobs:
         uses: redhat-actions/buildah-build@v2
         with:
           image: ${{ env.IMAGE_NAME }}
-          tags: linux-ppc64le
+          tags: ${{ env.RELEASE_TAG }}-linux-ppc64le
           arch: ppc64le
           containerfiles: |
             ./images/openscap/Dockerfile
@@ -47,7 +49,7 @@ jobs:
         uses: redhat-actions/buildah-build@v2
         with:
           image: ${{ env.IMAGE_NAME }}
-          tags: linux-s390x
+          tags: ${{ env.RELEASE_TAG }}-linux-s390x
           arch: s390x
           containerfiles: |
             ./images/openscap/Dockerfile
@@ -59,9 +61,9 @@ jobs:
       - name: Create and add to manifest
         run: |
           buildah manifest create ${{ env.IMAGE_NAME }}
-          buildah manifest add ${{ env.IMAGE_NAME }} ${{ env.IMAGE_NAME }}:linux-amd64
-          buildah manifest add ${{ env.IMAGE_NAME }} ${{ env.IMAGE_NAME }}:linux-ppc64le
-          buildah manifest add ${{ env.IMAGE_NAME }} ${{ env.IMAGE_NAME }}:linux-s390x
+          buildah manifest add ${{ env.IMAGE_NAME }} ${{ env.IMAGE_NAME }}:${{ env.RELEASE_TAG }}-linux-amd64
+          buildah manifest add ${{ env.IMAGE_NAME }} ${{ env.IMAGE_NAME }}:${{ env.RELEASE_TAG }}-linux-ppc64le
+          buildah manifest add ${{ env.IMAGE_NAME }} ${{ env.IMAGE_NAME }}:${{ env.RELEASE_TAG }}-linux-s390x
                
      # Authenticate to container image registry to push the image
       - name: Podman Login
@@ -73,4 +75,4 @@ jobs:
           
       - name: Push manifest
         run: |          
-            podman manifest push ${{ env.IMAGE_NAME }}  ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}  --all  
+            podman manifest push ${{ env.IMAGE_NAME }}  ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/${{ env.IMAGE_NAME }}:${{ env.RELEASE_TAG }}-${{ env.IMAGE_TAG }}  --all  
