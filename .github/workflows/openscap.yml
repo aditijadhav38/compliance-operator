@@ -2,8 +2,6 @@ name: Multiarch build
 
 on:
   push:
-    branches:
-        master
     tags:
       - v**
 env:
