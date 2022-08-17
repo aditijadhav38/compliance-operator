@@ -2,10 +2,8 @@ name: Multiarch build
 
 on:
   push:
-    branches:
-      - master
     tags:
-      - v*
+      - v**
 env:
   IMAGE_NAME: openscap-ocp
   IMAGE_TAG: multi-arch
