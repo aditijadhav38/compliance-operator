@@ -1,4 +1,4 @@
-name: Multiarch build
+name: Multiarch build for bundle
 
 on:
   push:
@@ -10,7 +10,7 @@ env:
   IMAGE_NAME: compliance-operator-bundle
   IMAGE_TAG: multi-arch
   IMAGE_REGISTRY: quay.io
-  IMAGE_NAMESPACE: aditijadhav38
+  IMAGE_NAMESPACE: aditijadhav
 
 jobs:
   build:
