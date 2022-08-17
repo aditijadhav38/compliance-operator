@@ -20,8 +20,11 @@ jobs:
     steps:
       - name: add checkout action...
         uses: actions/checkout@v2
+      - name: Fetch latest release version
+        uses: reloc8/action-latest-release-version@1.0.0
+        id: fetch-latest-release
       - name: Set Env Tags
-        run: echo RELEASE_TAG=$(echo $GITHUB_REF | cut -d '/' -f 3) >> $GITHUB_ENV
+        run: echo RELEASE_TAG=${{ steps.fetch-latest-release.outputs.latest-release }} >> $GITHUB_ENV
 
       
       - name: Set up QEMU
