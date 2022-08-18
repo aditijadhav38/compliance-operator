@@ -38,7 +38,7 @@ metadata:
             "scans": [
               {
                 "content": "ssg-rhcos4-ds.xml",
-                "contentImage": "quay.io/compliance-operator/compliance-operator-content:latest",
+                "contentImage": "quay.io/aditijadhav/compliance-operator-content:multi-arch",
                 "name": "workers-scan",
                 "nodeSelector": {
                   "node-role.kubernetes.io/worker": ""
@@ -47,7 +47,7 @@ metadata:
               },
               {
                 "content": "ssg-ocp4-ds.xml",
-                "contentImage": "quay.io/compliance-operator/compliance-operator-content:latest",
+                "contentImage": "quay.io/aditijadhav/compliance-operator-content:multi-arch",
                 "name": "platform-scan",
                 "profile": "xccdf_org.ssgproject.content_profile_moderate",
                 "scanType": "Platform"
@@ -64,7 +64,7 @@ metadata:
           },
           "spec": {
             "contentFile": "ssg-ocp4-ds.xml",
-            "contentImage": "quay.io/compliance-operator/compliance-operator-content:latest"
+            "contentImage": "quay.io/aditijadhav/compliance-operator-content:multi-arch"
           }
         },
         {
@@ -1290,12 +1290,12 @@ spec:
                     fieldRef:
                       fieldPath: metadata.name
                 - name: RELATED_IMAGE_OPENSCAP
-                  value: quay.io/compliance-operator/openscap-ocp:1.3.5
+                  value: quay.io/aditijadhav/openscap-ocp:multi-arch
                 - name: RELATED_IMAGE_OPERATOR
-                  value: quay.io/compliance-operator/compliance-operator:0.1.53
+                  value: quay.io/gauravbankar/compliance-operator:multi-arch
                 - name: RELATED_IMAGE_PROFILE
-                  value: quay.io/compliance-operator/compliance-operator-content:latest
-                image: quay.io/compliance-operator/compliance-operator:0.1.53
+                  value: quay.io/aditijadhav/compliance-operator-content:multi-arch
+                image: quay.io/gauravbankar/compliance-operator:multi-arch
                 imagePullPolicy: Always
                 name: compliance-operator
                 resources:
