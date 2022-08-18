@@ -35,11 +35,52 @@ jobs:
             
       - uses: actions/checkout@v2.1.0
       - run: sudo make index-image
-      - uses: redhat-actions/buildah-build@v2
+      
+      - name: Build index image for amd64
+        uses: redhat-actions/buildah-build@v2
         with:
           image: ${{ env.IMAGE_NAME }}
           tags: ${{ env.RELEASE_TAG }}-linux-amd64
           arch: amd64
           containerfiles: |
             ./index.Dockerfile
+            
+      - name: Build index image for ppc64le
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: ${{ env.IMAGE_NAME }}
+          tags: ${{ env.RELEASE_TAG }}-linux-ppc64le
+          arch: ppc64le
+          containerfiles: |
+            ./index.Dockerfile
+            
+      - name: Build index image for s390x
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: ${{ env.IMAGE_NAME }}
+          tags: ${{ env.RELEASE_TAG }}-linux-s390x
+          arch: s390x
+          containerfiles: |
+            ./index.Dockerfile
+            
+      - name: Check images created
+        run: buildah images | grep '${{ env.IMAGE_NAME }}'
           
+      - name: Create and add to manifest
+        run: |
+          buildah manifest create ${{ env.IMAGE_NAME }}
+          buildah manifest add ${{ env.IMAGE_NAME }} ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}-linux-amd64
+          buildah manifest add ${{ env.IMAGE_NAME }} ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}-linux-ppc64le
+          buildah manifest add ${{ env.IMAGE_NAME }} ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}-linux-s390x
+               
+     # Authenticate to container image registry to push the image
+      - name: Podman Login
+        uses: redhat-actions/podman-login@v1
+        with:
+          registry: quay.io
+          username: ${{ secrets.QUAY_USER }}
+          password: ${{ secrets.QUAY_PWD }}
+          
+      - name: Push manifest
+        run: |          
+            podman manifest push ${{ env.IMAGE_NAME }}  ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}  --all     
