@@ -39,20 +39,12 @@ jobs:
           arch: amd64
           run: sudo make index-image
 	  
-      - name: Build image linux/ppc64le
+      - name: Build image linux/amd64
         uses: redhat-actions/buildah-build@v2
         with:
           image: ${{ env.IMAGE_NAME }}
           tags: ${{ env.IMAGE_TAG }}-linux-ppc64le
           arch: ppc64le
-          run: sudo make index-image
-	  
-      - name: Build image linux/s390x
-        uses: redhat-actions/buildah-build@v2
-        with:
-          image: ${{ env.IMAGE_NAME }}
-          tags: ${{ env.IMAGE_TAG }}-linux-s390x
-          arch: s390x
           run: sudo make index-image
 	  
       - name: Check images created
@@ -63,7 +55,7 @@ jobs:
           buildah manifest create ${{ env.IMAGE_NAME }}
           buildah manifest add ${{ env.IMAGE_NAME }} ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}-linux-amd64
           buildah manifest add ${{ env.IMAGE_NAME }} ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}-linux-ppc64le
-          buildah manifest add ${{ env.IMAGE_NAME }} ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}-linux-s390x
+          
                
      # Authenticate to container image registry to push the image
       - name: Podman Login
