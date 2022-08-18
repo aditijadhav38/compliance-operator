@@ -2,13 +2,10 @@ name: Multiarch build
 
 on:
   push:
-    branches:
-        master
     tags:
       - v**
 env:
   IMAGE_NAME: openscap-ocp
-  IMAGE_TAG: multi-arch
   IMAGE_REGISTRY: ghcr.io
   IMAGE_NAMESPACE: aditijadhav38
 
@@ -21,7 +18,7 @@ jobs:
       - name: add checkout action...
         uses: actions/checkout@v2
       - name: test print
-        run: echo "Hello World 1.5.0"
+        run: echo "Hello World release"
       - name: Fetch latest release version
         uses: reloc8/action-latest-release-version@1.0.0
         id: fetch-latest-release
@@ -80,4 +77,4 @@ jobs:
           
       - name: Push manifest
         run: |          
-            podman manifest push ${{ env.IMAGE_NAME }}  ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/${{ env.IMAGE_NAME }}:${{ env.RELEASE_TAG }}-${{ env.IMAGE_TAG }}  --all  
+            podman manifest push ${{ env.IMAGE_NAME }}  ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/${{ env.IMAGE_NAME }}:${{ env.RELEASE_TAG }}  --all  
