@@ -1,4 +1,4 @@
-name: Multiarch build for bundle
+name: Multiarch build for bundle-index
 
 on:
   push:
