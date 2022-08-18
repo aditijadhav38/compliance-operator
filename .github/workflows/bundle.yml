@@ -7,8 +7,8 @@ on:
     tags:
       - v**
 env:
-  BUNDLE_IMAGE_NAME: compliance-operator-bundle
-  BUNDLE_IMAGE_TAG: multi-arch
+  IMAGE_NAME: compliance-operator-bundle
+  IMAGE_TAG: multi-arch
   IMAGE_REGISTRY: quay.io
   IMAGE_NAMESPACE: aditijadhav
 
