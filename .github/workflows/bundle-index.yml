@@ -4,8 +4,6 @@ on:
   push:
     branches:
         master
-    tags:
-      - v**
     
 env:
   IMAGE_NAME: compliance-operator-index
@@ -40,7 +38,7 @@ jobs:
         uses: redhat-actions/buildah-build@v2
         with:
           image: ${{ env.IMAGE_NAME }}
-          tags: ${{ env.RELEASE_TAG }}-linux-amd64
+          tags: ${{ env.IMAGE_TAG }}-linux-amd64
           arch: amd64
           containerfiles: |
             ./index.Dockerfile
@@ -49,7 +47,7 @@ jobs:
         uses: redhat-actions/buildah-build@v2
         with:
           image: ${{ env.IMAGE_NAME }}
-          tags: ${{ env.RELEASE_TAG }}-linux-ppc64le
+          tags: ${{ env.IMAGE_TAG }}-linux-ppc64le
           arch: ppc64le
           containerfiles: |
             ./index.Dockerfile
@@ -58,7 +56,7 @@ jobs:
         uses: redhat-actions/buildah-build@v2
         with:
           image: ${{ env.IMAGE_NAME }}
-          tags: ${{ env.RELEASE_TAG }}-linux-s390x
+          tags: ${{ env.IMAGE_TAG }}-linux-s390x
           arch: s390x
           containerfiles: |
             ./index.Dockerfile
