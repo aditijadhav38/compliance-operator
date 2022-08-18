@@ -163,7 +163,7 @@ test-bundle-image:
 
 .PHONY: index-image
 index-image: opm
-	$(GOPATH)/bin/opm index add -b quay.io/gauravbankar/compliance-operator-bundle:multi-arch -t quay.io/gauravbankar/compliance-operator-index:multi-arch  --overwrite-latest
+	$(GOPATH)/bin/opm index add -b quay.io/gauravbankar/compliance-operator-bundle:multi-arch -t quay.io/gauravbankar/compliance-operator-index:multi-arch  --generate
 	
 .PHONY: test-index-image
 test-index-image: opm test-bundle-image push-test-bundle
