@@ -35,4 +35,16 @@ jobs:
         uses: redhat-actions/buildah-build@v2
         with:
           arch: amd64
-		      run: sudo make index-image
+          run: sudo make index-image
+	  
+      - name: Build image linux/ppc64le
+        uses: redhat-actions/buildah-build@v2
+        with:
+          arch: ppc64le
+          run: sudo make index-image
+	  
+      - name: Build image linux/s390x
+        uses: redhat-actions/buildah-build@v2
+        with:
+          arch: s390x
+          run: sudo make index-image
