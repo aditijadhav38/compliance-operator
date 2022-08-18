@@ -33,8 +33,19 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
             
-      - name: Build image linux/amd64
-        uses: uraimo/run-on-arch-action@v2
+      - uses: actions/checkout@v2.1.0
+      - uses: uraimo/run-on-arch-action@v2
+        name: Run commands
+        id: runcmd
         with:
-          arch: amd64
-          run: sudo make index-image
+          arch: armv7
+          distro: ubuntu18.04
+
+          # Not required, but speeds up builds by storing container images in
+          # a GitHub package registry.
+          
+
+          # Set an output parameter `uname` for use in subsequent steps
+          run: |
+            uname -a
+            echo ::set-output name=uname::$(uname -a)
