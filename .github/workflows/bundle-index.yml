@@ -34,7 +34,7 @@ jobs:
         uses: docker/setup-qemu-action@v1
             
       - uses: actions/checkout@v2.1.0
-      - run: make index-image
+      - run: sudo make index-image
       - uses: redhat-actions/buildah-build@v2
         with:
           image: ${{ env.IMAGE_NAME }}
