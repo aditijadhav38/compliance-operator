@@ -159,8 +159,8 @@ test-bundle-image:
 
 .PHONY: index-image
 index-image: opm
-	$(GOPATH)/bin/opm index add -b $(BUNDLE_IMAGE_PATH):$(BUNDLE_IMAGE_TAG) -f $(INDEX_IMAGE_PATH):$(INDEX_IMAGE_TAG) -t $(INDEX_IMAGE_PATH):$(INDEX_IMAGE_TAG) -c $(RUNTIME) --overwrite-latest
-
+	$(GOPATH)/bin/opm index add -b quay.io/gauravbankar/compliance-operator-bundle:multi-arch -t quay.io/gauravbankar/compliance-operator-index:multi-arch  --overwrite-latest
+	
 .PHONY: test-index-image
 test-index-image: opm test-bundle-image push-test-bundle
 	$(GOPATH)/bin/opm index add -b $(BUNDLE_IMAGE_PATH):$(TEST_BUNDLE_IMAGE_TAG) -t $(INDEX_IMAGE_PATH):$(INDEX_IMAGE_TAG) -c $(RUNTIME)
