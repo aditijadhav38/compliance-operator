@@ -37,7 +37,7 @@ jobs:
             echo "Inside run"
             sudo apt-get install -y make
             echo "Installed make"
-            make index-image
+            sudo make index-image
              
                    
       
