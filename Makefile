@@ -21,8 +21,10 @@ endif
 ARCH?=$(shell uname -m)
 ifeq ($(ARCH), x86_64)
     OPM_ARCH?=amd64
-else
-    OPM_ARCH?=$(ARCH)
+else ifeq ($(ARCH), ppc64le)
+    OPM_ARCH?=ppc64le
+else ifeq ($(ARCH), s390x)
+    OPM_ARCH?=s390x
 endif
 
 ifeq ($(RUNTIME), podman)
