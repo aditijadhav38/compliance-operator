@@ -24,6 +24,6 @@ RUN true \
     && microdnf install -y openscap-scanner \
     && microdnf clean all \
     && true
-
+RUN echo 'Hello world'
 RUN mkdir /app
 RUN rpm -q openscap-scanner > /app/scap_version
