@@ -41,7 +41,9 @@ jobs:
           containerfiles: |
             ./bundle.Dockerfile
           run: |
+            echo "Inside run"
             sudo apt-get install -y make
+            echo "Installed make"
             make index-image
              
                    
