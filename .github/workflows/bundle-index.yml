@@ -34,18 +34,12 @@ jobs:
         uses: docker/setup-qemu-action@v1
             
       - uses: actions/checkout@v2.1.0
-      - uses: uraimo/run-on-arch-action@v2
-        name: Run commands
-        id: runcmd
+      - run: make index-image
+      - uses: redhat-actions/buildah-build@v2
         with:
+          image: ${{ env.IMAGE_NAME }}
+          tags: ${{ env.RELEASE_TAG }}-linux-amd64
           arch: amd64
-          distro: ubuntu18.04
-
-          # Not required, but speeds up builds by storing container images in
-          # a GitHub package registry.
+          containerfiles: |
+            ./index.Dockerfile
           
-
-          # Set an output parameter `uname` for use in subsequent steps
-          run: |
-            uname -a
-            sudo make index-image
