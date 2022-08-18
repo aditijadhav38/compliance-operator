@@ -25,6 +25,8 @@ else ifeq ($(ARCH), ppc64le)
     OPM_ARCH?=ppc64le
 else ifeq ($(ARCH), s390x)
     OPM_ARCH?=s390x
+else
+    OPM_ARCH?=$(ARCH)
 endif
 
 ifeq ($(RUNTIME), podman)
